@@ -546,9 +546,7 @@ initialize (int argc, char** argv)
 	// works for small files:
 	//camera_->set(-5.0, 0.0, 1.0, 0.0, 0.0, 0.0);
 	//camera_->set( 1.31762, 0.382931, 1.89533, 0, 0.20944, -9.14989);
-	//camera_->setPitch(0.20944); // not sure why this is here:
 	//camera_->set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
 	camera_->set(0.806997,4.49768,12.4199,0.0,1.93732,1.61007);
 
 	cout << "About to read: " << argv[1] << endl;
