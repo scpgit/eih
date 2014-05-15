@@ -18,7 +18,6 @@ int main() {
 	RobotBasePtr robot = robots[0];
 
 	std::vector<double> dofval;
-	std::vector<int> dofind;
 	robot->GetDOFValues(dofval);
 
 	for(std::vector<double>::iterator it = dofval.begin(); it != dofval.end(); ++it) {
