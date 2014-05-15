@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(eih)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -9,6 +9,7 @@ if (DEVEL_MODE)
 endif(DEVEL_MODE)
 
 set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem ")        
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 # http://cmake.3232098.n2.nabble.com/Default-value-for-CMAKE-BUILD-TYPE-td7550756.html
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -32,6 +33,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(BUILD_SHARED_LIBS true)
 
 set(TRAJOPT_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/ext/trajopt)
+set(DISTORTION_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/ext/distortion)
 
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
@@ -51,4 +53,3 @@ include("${CMAKE_SOURCE_DIR}/cmake/boost-python.cmake")
 
 add_subdirectory(ext)
 add_subdirectory(src)
- 
