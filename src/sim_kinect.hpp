@@ -45,25 +45,39 @@
 
 #include <pcl/range_image/range_image_planar.h>
 
-#include <pcl/visualization/cloud_viewer.h>
-
 class SimKinect {
 public:
-	SimKinect(osg::Group* root);
-	void SetPose(const OpenRAVE::Transform& pose);
-	void SetIntrinsics(float f);
-	void Update();
-	float* GetDepthImage();
-	unsigned char* GetColorImage(); // XXX this is bad if the row size is not a multiple of 4
+	typedef boost::shared_ptr<SimKinect> Ptr;
+	typedef boost::shared_ptr<const SimKinect> ConstPtr;
 
+	SimKinect(int argc, char** argv, const std::string& filename);
+
+	void initializeGL(int argc, char** argv);
+	void initializeOpenRave(const std::string& filename);
+
+	void setPose(const Eigen::Isometry3d& pose);
+	void setIntrinsics(float f);
+
+    void getMeasurement();
+
+    void writeScoreImage(const float* score_buffer, const std::string& fname);
+    void writeDepthImage(const float* depth_buffer, const std::string& fname);
+    void writeDepthImageUint(const float* depth_buffer, const std::string& fname);
+    void writeRgbImage(const uint8_t* rgb_buffer, const std::string& fname);
+
+    // OpenRave utils
+    void extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& geom);
+    void extractGeomFromLink(const OpenRAVE::KinBody::Link& link);
+    void modelFromOpenRaveMesh(const OpenRAVE::KinBody::Link::TRIMESH& mesh);
+
+public:
+	pcl::simulation::Scene::Ptr scene_;
+	pcl::simulation::Camera::Ptr camera_;
+	pcl::simulation::RangeLikelihood::Ptr rl_;
+
+private:
 	uint16_t t_gamma[2048];
 
-	Scene::Ptr scene_;
-	Camera::Ptr camera_;
-	RangeLikelihood::Ptr range_likelihood_;
-
-	int window_width_;
-	int window_height_;
-	bool paused_;
-	bool write_file_;
+	int width_;
+	int height_;
 };
