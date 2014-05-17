@@ -56,10 +56,10 @@
 #define VTK_EXCLUDE_STRSTREAM_HEADERS
 #include <pcl/io/vtk_lib_io.h>
 
-#include "pcl/simulation/camera.h"
-#include "pcl/simulation/model.h"
-#include "pcl/simulation/scene.h"
-#include "pcl/simulation/range_likelihood.h"
+#include <pcl/simulation/camera.h>
+#include <pcl/simulation/model.h>
+#include <pcl/simulation/scene.h>
+#include <pcl/simulation/range_likelihood.h>
 
 #include <pcl/console/print.h>
 #include <pcl/console/parse.h>
@@ -608,7 +608,7 @@ main (int argc, char** argv)
   glutInitWindowSize (window_width_, window_height_);
   glutCreateWindow ("OpenGL range likelihood");
 
-  GLenum err = glewInit ();
+  GLenum err = glewInit();
   if (GLEW_OK != err)
   {
     std::cerr << "Error: " << glewGetErrorString (err) << std::endl;

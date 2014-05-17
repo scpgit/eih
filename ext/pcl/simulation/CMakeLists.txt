@@ -20,12 +20,13 @@ set(incs
 
 include_directories(
   SYSTEM  
-  ${GLEW_INCLUDE_DIR}
+  ${GLEW_INCLUDE_PATH}
   ${PCL_INCLUDE_DIRS}
+  ${PCL_SIMULATION_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
 )
 
 add_library(pcl_simulation ${srcs} ${incs})
-target_link_libraries(pcl_simulation ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} pcl_common pcl_io)
+target_link_libraries(pcl_simulation ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} pcl_common pcl_io)
 
 add_subdirectory(test)

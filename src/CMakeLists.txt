@@ -4,7 +4,8 @@ set(PCL_LIBRARIES kdtree common io visualization ${GLEW_LIBRARIES} ${GLUT_LIBRAR
 include_directories(
   SYSTEM  
   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-  ${GLUT_INCLUDE_DIR} ${GLEW_INCLUDE_DIR}
+  ${GLUT_INCLUDE_DIR} 
+  ${GLEW_INCLUDE_PATH}
   ${Boost_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
   ${OpenRAVE_INCLUDE_DIRS}
@@ -13,6 +14,7 @@ include_directories(
   ${DISTORTION_INCLUDE_DIRS}
   ${TRAJOPT_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${PCL_SIMULATION_INCLUDE_DIRS}
 )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
                    
