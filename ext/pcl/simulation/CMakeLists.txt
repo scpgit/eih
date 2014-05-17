@@ -1,5 +1,3 @@
-set(PCL_LIBRARIES kdtree common io visualization ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") 
 
 set(srcs 
@@ -28,6 +26,6 @@ include_directories(
 )
 
 add_library(pcl_simulation ${srcs} ${incs})
-target_link_libraries(pcl_simulation pcl_common pcl_io ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(pcl_simulation ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} pcl_common pcl_io)
 
-#add_subdirectory(tools)
+add_subdirectory(test)

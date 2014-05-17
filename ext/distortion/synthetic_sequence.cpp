@@ -1,10 +1,10 @@
 #include <cmath>
-#include <synthetic_sequence.h>
+#include "synthetic_sequence.h"
 #include <boost/filesystem.hpp>
 #include <pcl/io/pcd_io.h>
 #include <pcl/common/transforms.h>
 #include <pcl/console/time.h>
-#include <eigen_extensions.h>
+#include "eigen_extensions.h"
 #include <boost/random.hpp>
 
 /////////////////////////

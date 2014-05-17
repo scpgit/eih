@@ -3,7 +3,7 @@
 
 #include <Eigen/Eigen>
 #include <pcl/point_cloud.h>
-#include <eigen_extensions.h>
+#include "eigen_extensions.h"
 
 class Frustum
 {
