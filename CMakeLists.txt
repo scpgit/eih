@@ -23,7 +23,7 @@ endif()
 find_package(Eigen REQUIRED)
 find_package(Boost COMPONENTS system filesystem python thread date_time iostreams program_options REQUIRED)
 find_package(OpenRAVE REQUIRED)
-find_package(PCL 1.7 COMPONENTS kdtree simulation common io visualization REQUIRED)
+find_package(PCL 1.7 COMPONENTS kdtree common io visualization REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 

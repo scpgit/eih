@@ -97,10 +97,6 @@ void SimKinect::initializeOpenRave(const std::string& filename)
 }
 
 /*
-void convertToIsometry3d(const OpenRAVE::Transform& T, Eigen::Isometry3d* m) {
-	OpenRAVE::RaveTransformMatrix orT(T);
-}
-
 osg::Node* osgNodeFromGeom(const OpenRAVE::KinBody::Link::Geometry& geom)
 {
 	osg::Geode* geode = new osg::Geode;
@@ -121,95 +117,57 @@ osg::Node* osgNodeFromGeom(const OpenRAVE::KinBody::Link::Geometry& geom)
 }
 */
 
-void SimKinect::modelFromOpenRaveMesh(const OpenRAVE::KinBody::Link::TRIMESH& mesh)
+void SimKinect::trimeshFromOpenRaveMesh(const OpenRAVE::KinBody::Link::Geometry& geom, const OpenRAVE::Transform& T)
 {
+	const OpenRAVE::KinBody::Link::TRIMESH& mesh = geom.GetCollisionMesh();
 
-	std::cout << "Num vertices in mug: " << mesh.vertices.size() << std::endl;
-	std::cout << "Vertices: " << std::endl;
-	for(int i = 0; i < mesh.vertices.size(); ++i) {
-		const OpenRAVE::Vector& v = mesh.vertices[i];
-		//std::cout << v.x << " " << v.y << " " << v.z  << std::endl;
+	pcl::simulation::TriangleMeshModel::Ptr model(new pcl::simulation::TriangleMeshModel());
+
+	LOG_INFO("Number of mesh vertices: %d\n", (int)mesh.vertices.size());
+	LOG_INFO("Number of mesh indices: %d\n", (int)mesh.indices.size());
+
+	pcl::simulation::Vertices vertices(mesh.vertices.size());
+	pcl::simulation::Indices indices(mesh.indices.size());
+
+	Eigen::Vector4f tmp;
+
+	for(int i = 0; i < (int)mesh.vertices.size(); ++i) {
+		const OpenRAVE::Vector pt = T*mesh.vertices[i];
+		pcl::simulation::Vertex& vert = vertices[i];
+		vert.pos << v.x, v.y, v.z;
+		vert.rgb
+		vertArray[i] = vert;
 	}
 
-	std::cout << "Num indices in mug: " << mesh.indices.size() << std::endl;
-	std::cout << "Indices: " << std::endl;
-
-	/*
-	osg::Vec3Array* vec = new osg::Vec3Array();
-	vec->resize( mesh.vertices.size());
-	for(int i = 0; i < mesh.vertices.size(); ++i) {
-		const Vector& v = mesh.vertices[i];
-		(*vec)[i].set( v.x, v.y, v.z );
+	for(size_t i=0; i< plg->polygons.size (); ++i)
+	{ // each triangle/polygon
+		pcl::Vertices apoly_in = plg->polygons[i];
+		for(size_t j = 0; j < apoly_in.vertices.size (); ++j)
+		{ // each point
+			uint32_t pt = apoly_in.vertices[j];
+			tmp = newcloud.points[pt].getVector4fMap();
+			vertices.push_back (Vertex (Eigen::Vector3f (tmp (0), tmp (1), tmp (2)),
+					Eigen::Vector3f (newcloud.points[pt].r/255.0f,
+							newcloud.points[pt].g/255.0f,
+							newcloud.points[pt].b/255.0f)));
+			indices.push_back (indices.size ());
+		}
 	}
 
-	osg::DrawElementsUInt* deui = new osg::DrawElementsUInt( GL_LINE_STRIP );
-	for(int i = 0; i < mesh.indices.size(); ++i)
-		deui->push_back( mesh.indices[ i ] );
+	__glewGenBuffers (1, &model->vbo_);
+	__glewBindBuffer (GL_ARRAY_BUFFER, model->vbo_);
+	__glewBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (vertices[0]), &(vertices[0]), GL_STATIC_DRAW);
+	__glewBindBuffer (GL_ARRAY_BUFFER, 0);
 
+	__glewGenBuffers (1, &model->ibo_);
+	__glewBindBuffer (GL_ELEMENT_ARRAY_BUFFER, model->ibo_);
+	__glewBufferData (GL_ELEMENT_ARRAY_BUFFER, indices.size () * sizeof (indices[0]), &(indices[0]), GL_STATIC_DRAW);
+	__glewBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	osg::Vec4Array* color = new osg::Vec4Array();
-	color->push_back( osg::Vec4( 1., 1., 1., 1. ) );
-
-	osg::Geometry* geom = new osg::Geometry;
-	geom->setVertexArray( vec );
-	geom->setColorArray( color );
-	geom->setColorBinding( osg::Geometry::BIND_OVERALL );
-
-	geom->addPrimitiveSet( deui );
-
-
-
-
-	pcl::simulation::Vertices vertices;
-	pcl::simulation::Indices indices;
-
-	// Assume by default that color information is available
-	    pcl::PointCloud<pcl::PointXYZRGB> newcloud;
-	    pcl::fromPCLPointCloud2 (plg->cloud, newcloud);
-
-	    PCL_DEBUG("RGB Triangle mesh: ");
-	    PCL_DEBUG("Mesh polygons: %ld", plg->polygons.size ());
-	    PCL_DEBUG("Mesh points: %ld", newcloud.points.size ());
-
-	    Eigen::Vector4f tmp;
-	    for(size_t i=0; i< plg->polygons.size (); ++i)
-	    { // each triangle/polygon
-	      pcl::Vertices apoly_in = plg->polygons[i];
-	      for(size_t j = 0; j < apoly_in.vertices.size (); ++j)
-	      { // each point
-	        uint32_t pt = apoly_in.vertices[j];
-	        tmp = newcloud.points[pt].getVector4fMap();
-	        vertices.push_back (Vertex (Eigen::Vector3f (tmp (0), tmp (1), tmp (2)),
-	                                    Eigen::Vector3f (newcloud.points[pt].r/255.0f,
-	                                                     newcloud.points[pt].g/255.0f,
-	                                                     newcloud.points[pt].b/255.0f)));
-	        indices.push_back (indices.size ());
-	      }
-	    }
-	  }
-
-	  PCL_DEBUG("Vertices: %ld", vertices.size ());
-	  PCL_DEBUG("Indices: %ld", indices.size ());
-
-	  glGenBuffers (1, &vbo_);
-	  glBindBuffer (GL_ARRAY_BUFFER, vbo_);
-	  glBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (vertices[0]), &(vertices[0]), GL_STATIC_DRAW);
-	  glBindBuffer (GL_ARRAY_BUFFER, 0);
-
-	  glGenBuffers (1, &ibo_);
-	  glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, ibo_);
-	  glBufferData (GL_ELEMENT_ARRAY_BUFFER, indices.size () * sizeof (indices[0]), &(indices[0]), GL_STATIC_DRAW);
-	  glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	  if (indices.size () > std::numeric_limits<GLuint>::max ())
-	    PCL_THROW_EXCEPTION(PCLException, "Too many vertices");
-
-	  size_ = static_cast<GLuint>(indices.size ());
-	*/
-
+	model->size_ = static_cast<GLuint>(indices.size ());
 }
 
-void SimKinect::extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& geom)
+void SimKinect::extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& geom, const OpenRAVE::Transform& T)
 {
 
 	/*
@@ -234,7 +192,7 @@ void SimKinect::extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& g
 	{
 	//  Extract geometry from collision Mesh
 	case OpenRAVE::KinBody::Link::GEOMPROPERTIES::GeomTrimesh:{
-		modelFromOpenRaveMesh(geom.GetCollisionMesh());
+		trimeshFromOpenRaveMesh(geom, T);
 		//pcl::simulation::TriangleMeshModel::Ptr model =
 		//scene_->add(model);
 		break;
@@ -250,7 +208,7 @@ void SimKinect::extractGeomFromLink(const OpenRAVE::KinBody::Link& link) {
 	const std::vector<OpenRAVE::KinBody::Link::GeometryPtr>& geoms = link.GetGeometries();
 	for (int i=0; i < geoms.size(); ++i)
 	{
-		extractGeomFromORGeom(*geoms[i]);
+		extractGeomFromORGeom(*geoms[i], link.GetTransform());
 
 		// extract transform here from geoms[i]->GetTransform()
 

@@ -66,9 +66,9 @@ public:
     void writeRgbImage(const uint8_t* rgb_buffer, const std::string& fname);
 
     // OpenRave utils
-    void extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& geom);
     void extractGeomFromLink(const OpenRAVE::KinBody::Link& link);
-    void modelFromOpenRaveMesh(const OpenRAVE::KinBody::Link::TRIMESH& mesh);
+    void extractGeomFromORGeom(const OpenRAVE::KinBody::Link::Geometry& geom, const OpenRAVE::Transform& T);
+    void trimeshFromOpenRaveMesh(const OpenRAVE::KinBody::Link::Geometry& geom, const OpenRAVE::Transform& T);
 
 public:
 	pcl::simulation::Scene::Ptr scene_;

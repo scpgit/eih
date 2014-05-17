@@ -1,5 +1,5 @@
 set(OSG_LIBRARIES osg osgViewer OpenThreads osgDB osgGA osgUtil)       
-set(PCL_LIBRARIES kdtree simulation common io visualization ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
+set(PCL_LIBRARIES kdtree common io visualization ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
        
 include_directories(
   SYSTEM  
