@@ -75,6 +75,7 @@ namespace pcl
         typedef boost::shared_ptr<TriangleMeshModel> Ptr;
         typedef boost::shared_ptr<const TriangleMeshModel> ConstPtr;
 
+        TriangleMeshModel();
         TriangleMeshModel (pcl::PolygonMesh::Ptr plg);
 
         virtual
@@ -83,7 +84,7 @@ namespace pcl
         virtual void
         draw ();
 
-      private:
+      public:
         GLuint vbo_;
         GLuint ibo_;
         GLuint size_;
@@ -100,7 +101,8 @@ namespace pcl
 
         typedef boost::shared_ptr<PolygonMeshModel> Ptr;
         typedef boost::shared_ptr<const PolygonMeshModel> ConstPtr;
-      private:
+
+      public:
         std::vector<SinglePoly> polygons;
 
         /*
@@ -132,7 +134,7 @@ namespace pcl
         virtual void
         draw();
 
-      private:
+      public:
         float* vertices_;
         float* colors_;
 
@@ -179,7 +181,7 @@ namespace pcl
         void
         render ();
 
-      private:
+      public:
         GLuint quad_vbo_;
     };
 
@@ -198,7 +200,7 @@ namespace pcl
         void
         render ();
   
-      private:
+      public:
         int width_;
         int height_;
         Quad quad_;

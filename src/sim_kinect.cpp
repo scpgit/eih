@@ -87,7 +87,7 @@ void SimKinect::initializeOpenRave(const std::string& filename)
 		{
 			const std::vector<OpenRAVE::KinBody::LinkPtr>& links = body.GetLinks();
 			for (int i=0; i < links.size(); ++i) {
-				LOG_INFO("    Parsing kinbody link %s", links[i]->GetName().c_str());
+				LOG_INFO("\t\tParsing kinbody link %s", links[i]->GetName().c_str());
 				if (links[i]->GetGeometries().size() > 0) {
 					extractGeomFromLink(*links[i]);
 				}
@@ -123,46 +123,38 @@ void SimKinect::trimeshFromOpenRaveMesh(const OpenRAVE::KinBody::Link::Geometry&
 
 	pcl::simulation::TriangleMeshModel::Ptr model(new pcl::simulation::TriangleMeshModel());
 
-	LOG_INFO("Number of mesh vertices: %d\n", (int)mesh.vertices.size());
-	LOG_INFO("Number of mesh indices: %d\n", (int)mesh.indices.size());
+	LOG_INFO("\t\t\tNumber of mesh vertices: %d", (int)mesh.vertices.size());
+	LOG_INFO("\t\t\tNumber of mesh indices: %d", (int)mesh.indices.size());
 
 	pcl::simulation::Vertices vertices(mesh.vertices.size());
 	pcl::simulation::Indices indices(mesh.indices.size());
 
-	Eigen::Vector4f tmp;
+	OpenRAVE::Vector diffuse = geom.GetDiffuseColor();
+	LOG_INFO("\t\t\tColor of object: %f %f %f",diffuse.x,diffuse.y,diffuse.z);
 
 	for(int i = 0; i < (int)mesh.vertices.size(); ++i) {
 		const OpenRAVE::Vector pt = T*mesh.vertices[i];
 		pcl::simulation::Vertex& vert = vertices[i];
-		vert.pos << v.x, v.y, v.z;
-		vert.rgb
-		vertArray[i] = vert;
+		vert.pos << pt.x, pt.y, pt.z;
+		vert.rgb << diffuse.x, diffuse.y, diffuse.z;
 	}
 
-	for(size_t i=0; i< plg->polygons.size (); ++i)
-	{ // each triangle/polygon
-		pcl::Vertices apoly_in = plg->polygons[i];
-		for(size_t j = 0; j < apoly_in.vertices.size (); ++j)
-		{ // each point
-			uint32_t pt = apoly_in.vertices[j];
-			tmp = newcloud.points[pt].getVector4fMap();
-			vertices.push_back (Vertex (Eigen::Vector3f (tmp (0), tmp (1), tmp (2)),
-					Eigen::Vector3f (newcloud.points[pt].r/255.0f,
-							newcloud.points[pt].g/255.0f,
-							newcloud.points[pt].b/255.0f)));
-			indices.push_back (indices.size ());
-		}
+	for(int i = 0; i < (int)mesh.indices.size(); ++i) {
+		indices[i] = mesh.indices[i];
 	}
 
-	__glewGenBuffers (1, &model->vbo_);
-	__glewBindBuffer (GL_ARRAY_BUFFER, model->vbo_);
-	__glewBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (vertices[0]), &(vertices[0]), GL_STATIC_DRAW);
-	__glewBindBuffer (GL_ARRAY_BUFFER, 0);
+	LOG_INFO("\t\t\tVertices size: %d",(int)vertices.size());
+	LOG_INFO("\t\t\tIndices size: %d",(int)indices.size());
 
-	__glewGenBuffers (1, &model->ibo_);
-	__glewBindBuffer (GL_ELEMENT_ARRAY_BUFFER, model->ibo_);
-	__glewBufferData (GL_ELEMENT_ARRAY_BUFFER, indices.size () * sizeof (indices[0]), &(indices[0]), GL_STATIC_DRAW);
-	__glewBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
+	glGenBuffers (1, &model->vbo_);
+	glBindBuffer (GL_ARRAY_BUFFER, model->vbo_);
+	glBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (vertices[0]), &(vertices[0]), GL_STATIC_DRAW);
+	glBindBuffer (GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers (1, &model->ibo_);
+	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, model->ibo_);
+	glBufferData (GL_ELEMENT_ARRAY_BUFFER, indices.size () * sizeof (indices[0]), &(indices[0]), GL_STATIC_DRAW);
+	glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	model->size_ = static_cast<GLuint>(indices.size ());
 }

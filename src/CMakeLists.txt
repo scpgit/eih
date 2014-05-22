@@ -19,4 +19,4 @@ include_directories(
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
                    
 add_executable(sim_kinect main.cpp sim_kinect.cpp)
-target_link_libraries(sim_kinect ${Boost_SYSTEM_LIBRARY} ${OpenRAVE_LIBRARIES} ${OpenRAVE_CORE_LIBRARIES}  pcl_simulation pcl_common pcl_io ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} utils)
+target_link_libraries(sim_kinect ${Boost_SYSTEM_LIBRARY} ${OpenRAVE_LIBRARIES} ${OpenRAVE_CORE_LIBRARIES}  pcl_simulation pcl_common pcl_io ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} utils)
